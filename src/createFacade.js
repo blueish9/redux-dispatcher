@@ -1,22 +1,24 @@
 import {store} from "./dispatcherMiddleware";
+import {createReducer} from "./createReducer";
 
 
 /**
  * @param: mapActionToAC: Object<string: function or object>
  */
-export default function createDispatcher(mapDispatchToAction) {
-  const facade = {};
+export default function createFacade(key, mapDispatchToAction) {
+  const facade = createReducer(key);
+  facade.key = key;
 
   for (const dispatch in mapDispatchToAction)
     if (mapDispatchToAction.hasOwnProperty(dispatch)) {
       const {type, creator} = mapDispatchToAction[dispatch];
-      facade[dispatch] = wrapDispatch(type, creator);
+      facade[dispatch] = createDispatcher(type, creator);
     }
 
   return facade;
 };
 
-const wrapDispatch = (actionType, actionCreator) => {
+const createDispatcher = (actionType, actionCreator) => {
   const dispatcher = (...args) => {
     const payload = typeof actionCreator === 'function' ? actionCreator.apply(null, args) : actionCreator;
     const action = {

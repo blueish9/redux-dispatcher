@@ -3,8 +3,8 @@
  * Date: 1/8/19
  */
 
-export const createReducer = key => (initialState, reducer) => {
-  const mapTypeToHandler = parseHandler(reducer);
+export const createReducer = key => (initialState, mapDispatchToReducer) => {
+  const mapTypeToHandler = parseHandler(mapDispatchToReducer);
 
   return {
     [key]: (state = initialState, {type, ...payload}) => {
@@ -28,16 +28,16 @@ export const createReducer = key => (initialState, reducer) => {
   }
 };
 
-const parseHandler = reducerHandler => {
-  const reactor = {};
+const parseHandler = mapDispatchToReducer => {
+  const reducerHandler = {};
 
-  for (const key in reducerHandler)
-    if (reducerHandler.hasOwnProperty(key) && typeof key === 'string') {
+  for (const key in mapDispatchToReducer)
+    if (mapDispatchToReducer.hasOwnProperty(key) && typeof key === 'string') {
       const actionTypes = key.split(',');
       actionTypes.forEach(type => {
-        reactor[type] = reducerHandler[key];
+        reducerHandler[type] = mapDispatchToReducer[key];
       });
     }
 
-  return reactor;
+  return reducerHandler;
 };

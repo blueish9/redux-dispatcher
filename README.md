@@ -1,3 +1,6 @@
+[![npm version](https://badge.fury.io/js/redux-dispatcher.svg)](https://badge.fury.io/js/redux-dispatcher)
+
+
 ## redux-dispatcher is another opinionated helper library working along side with Redux.
 **It's main purpose is to combine action type, action creator and store's dispatch function into one, then you no need to worry about defining and managing action type constants.**
 
@@ -11,8 +14,8 @@
 
 **Suitable**:
 - For people who have already familiar with Redux.
-- If you still need to use Redux but want to reduce boilerplate.
-- If you find it tiresome everytime you need to define, import, manage action type constants.
+- If you need to use Redux but want to reduce boilerplate.
+- If you find it tiresome every time you need to define, import, manage action type constants.
 
 
 ## Usage
@@ -36,6 +39,11 @@ const store = createStore(
 
 ### 2. Define action type, action creator and dispatch action
 
+before          |  after
+:-------------------------:|:-------------------------:
+![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/action_before.png)  |  ![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/action_after.png)
+
+#### Usual, without redux-dispatcher
 Define action type, action creator
 ```js
 export const FETCH_PROFILE = "FETCH_PROFILE";
@@ -92,14 +100,20 @@ const mapDispatchToAC = {
     })
 };
 
-export default profileDispatcher = synthesize(key, mapDispatchToAC);
+const profileDispatcher = synthesize(key, mapDispatchToAC);
 ```
 ```js
-// dispatch action
+// dispatch action anywhere you want
 profileDispatcher.updateProfile("my_username", "my_password");
 ```
 
 ### 3. Handle action in reducer
+
+before          |  after
+:-------------------------:|:-------------------------:
+![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/reducer_before.png)  |  ![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/reducer_after.png)
+
+#### Usual, without redux-dispatcher
 ```js
 const profileReducer = (state = initialState, action) => {
     const {type, ...payload} = action;
@@ -135,7 +149,7 @@ const rootReducer = combineReducers({
   profile: profileReducer,
 });
 ```
-Replace with redux-dispatcher
+#### Replace with redux-dispatcher
 ```js
 const profileReducerObject = profileDispatcher(initialState, {
     // similar to fall-through case in switch statement

@@ -3,7 +3,10 @@
  * Date: 1/8/19
  */
 
-export const createReducer = key => (initialState, mapDispatchToReducer) => {
+export const createReducer = (key, enhancer) => (initialState, mapDispatchToReducer) => {
+  if (enhancer)
+    ({initialState, mapDispatchToReducer} = enhancer.injectReducer(key, initialState, mapDispatchToReducer));
+
   const mapTypeToHandler = parseHandler(mapDispatchToReducer);
 
   return {

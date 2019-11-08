@@ -5,8 +5,8 @@ import {createReducer} from "./createReducer";
 /**
  * @param: mapActionToAC: Object<string: function or object>
  */
-export default function createFacade(key, mapDispatchToAction) {
-  const facade = createReducer(key);
+export default function createFacade(key, mapDispatchToAction, enhancer) {
+  const facade = createReducer(key, enhancer);
   facade.key = key;
 
   for (const dispatch in mapDispatchToAction)

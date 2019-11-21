@@ -10,8 +10,8 @@ const searchEnhancer = {
     fetchMany: (keyword = "", refresh = false) => ({keyword, refresh}),
     saveMany: (list, refresh) => ({list, refresh}),
 
-    fetchDetail: id => ({id}),
-    saveDetail: detail => ({detail}),
+    fetchItem: id => ({id}),
+    saveItem: detail => ({detail}),
 
     ...mapDispatchToAC
   }),

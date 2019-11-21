@@ -5,7 +5,7 @@
 **It's main purpose is to combine action type, action creator and store's dispatch function into one, then you no need to worry about defining and managing action type constants.**
 
 **Guaranteed**:
-- No breaking change, no new concept, nothing different from Redux paradigm: define action (payload), dispatch action, use reducer to handle action and return new state.
+- No new concept to learn, nothing different from Redux paradigm.
 - Easy to adapt.
 - Easy to read and write.
 - Less code.
@@ -43,27 +43,34 @@ before          |  after
 :-------------------------:|:-------------------------:
 ![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/action_before.png)  |  ![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/action_after.png)
 
-#### Usual, without redux-dispatcher
-Define action type, action creator
+With **redux-dispatcher**, the action type will be implicitly computed according to the ```key``` passed to ```synthesize``` method and the name of the action creator.
+
+But if you want to explicitly specify a type, you can include a ```type``` property in the return object.  
 ```js
-export const FETCH_PROFILE = "FETCH_PROFILE";
-export const UPDATE_PROFILE = "UPDATE_PROFILE";
+import {synthesize} from "redux-dispatcher";
 
-export const fetchProfile = () => ({
-    type: FETCH_PROFILE,
-    loading: true
-});
+const key = 'profile';
 
-export const updateProfile = (username, password) => ({
-    type: UPDATE_PROFILE,
-    username, password
-});
+const mapDispatchToAC = {
+    // type = "profile/FETCH_PROFILE"
+    // if the action doesn't depend on parameters, you can just write an object like this
+    fetchProfile: {loading: true},
+
+    // if not explicitly specified, the action type will be automatically set: type = "profile/UPDATE_PROFILE"
+    updateProfile: (username, password) => ({
+        // type: 'UPDATE_PROFILE',     you can specify the action type here
+        username, password
+    })
+};
+
+const profileDispatcher = synthesize(key, mapDispatchToAC);
 ```
 
-Dispatch action
+##### To dispatch action, this is what you usually do (without redux-dispatcher):
 ```js
-// use store directly
+// use store directly (not recommended)
 store.dispatch(fetchProfile());
+
 
 // or with react-redux
 class ProfileView extends React.Component {
@@ -79,31 +86,9 @@ const mapDispatchToProps = {fetchProfile, updateProfile};
 export default connect(mapStateToProps, mapDispatchToProps)(ProfileView);
 ```
 
-#### Replace with redux-dispatcher
-The action type will be implicitly computed according to the ```key``` passed to ```synthesize``` method and the name of the action creator.
+##### Replace the old code with redux-dispatcher, you can just import the dispatcher you like and dispatch action anywhere you want 
 
-But if you want to explicitly specify a type, you can include a ```type``` property in the return object.  
 ```js
-import {synthesize} from "redux-dispatcher";
-
-const key = 'profile';
-
-const mapDispatchToAC = {
-    // type = "profile/FETCH_PROFILE"
-    // if the action doesn't depend on parameters, you can just write an object like this
-    fetchProfile: {loading: true},
-
-    // if not explicitly specified, the action type will be automatically set: type = "profile/UPDATE_PROFILE"
-    updateProfile: (username, password) => ({
-        //type: 'UPDATE_PROFILE',     you can specify the action type here
-        username, password
-    })
-};
-
-const profileDispatcher = synthesize(key, mapDispatchToAC);
-```
-```js
-// dispatch action anywhere you want
 profileDispatcher.updateProfile("my_username", "my_password");
 ```
 
@@ -112,52 +97,18 @@ profileDispatcher.updateProfile("my_username", "my_password");
 before          |  after
 :-------------------------:|:-------------------------:
 ![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/reducer_before.png)  |  ![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/reducer_after.png)
+![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/root_reducer_before.png)  |  ![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/root_reducer_after.png)
 
-#### Usual, without redux-dispatcher
+Create ```reducer``` with **redux-dispatcher** is as easy as casual ```reducer```, with less code.
 ```js
-const profileReducer = (state = initialState, action) => {
-    const {type, ...payload} = action;
-    switch (type) {
-      case FETCH_PROFILE:
-      case RELOAD_PROFILE:
-      case RESET_PROFILE:
-          return {
-            ...state,
-            ...payload
-          };
-    
-      case LOADING_PROFILE:
-          return {
-              ...state,
-              loading: true
-          };
-    
-      case UPDATE_PROFILE:
-        const {username, password} = payload;
-        return {
-          ...state,
-          username,
-          password: encrypt(password)
-        };
-      
-      default:
-        return state;
-    }
-};
-
-const rootReducer = combineReducers({
-  profile: profileReducer,
-});
-```
-#### Replace with redux-dispatcher
-```js
-const profileReducerObject = profileDispatcher(initialState, {
+// profileReducerObject = { profile: reducer function }
+profileDispatcher(initialState, {
     // similar to fall-through case in switch statement
     [[
       profileDispatcher.fetchProfile,
       profileDispatcher.reloadProfile,
       profileDispatcher.resetProfile
-    ]]: (state, payload) => payload,    // notice the payload, it doesn't have type property like action
+    ]]: (state, payload) => payload,    // notice the payload, it doesn't have "type" property like action
     
     [profileDispatcher.loadingProfile]: {loading: true},    // you can just write a plain object if new state doesn't computed from current state or action payload
     
@@ -168,15 +119,10 @@ const profileReducerObject = profileDispatcher(initialState, {
     
     // the default case is handle automatically
 });
-
-// profileReducerObject = {profile: reducer function}
-const rootReducer = combineReducers({
-    ...profileReducerObject,
-});
 ```
 
 ### 4. Work with other third-party Redux libraries
-An example when working with Redux Saga: Instead of passing an actiont type, you can just pass a dispatcher function to the ```takeLatest``` function.
+An example when working with Redux Saga: Instead of passing an action type, you can just pass a dispatcher function to the ```takeLatest``` function.
 ```js
 function* updateProfile({username, password}) {
   

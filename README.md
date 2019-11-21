@@ -66,7 +66,7 @@ const mapDispatchToAC = {
 const profileDispatcher = synthesize(key, mapDispatchToAC);
 ```
 
-##### To dispatch action, this is what you usually do (without redux-dispatcher):
+To dispatch action, this is what you usually do (without redux-dispatcher):
 ```js
 // use store directly (not recommended)
 store.dispatch(fetchProfile());
@@ -86,7 +86,7 @@ const mapDispatchToProps = {fetchProfile, updateProfile};
 export default connect(mapStateToProps, mapDispatchToProps)(ProfileView);
 ```
 
-##### Replace the old code with redux-dispatcher, you can just import the dispatcher you like and dispatch action anywhere you want 
+Replace the old code with **redux-dispatcher**, you can just import the dispatcher you need and dispatch action anywhere you want 
 
 ```js
 profileDispatcher.updateProfile("my_username", "my_password");

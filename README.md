@@ -29,6 +29,7 @@ or
 
 **Setup**
 ```js
+import {applyMiddleware, createStore} from "redux";
 import {dispatcherMiddleware} from "redux-dispatcher";
 
 const store = createStore(
@@ -43,13 +44,13 @@ before          |  after
 :-------------------------:|:-------------------------:
 ![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/action_before.png)  |  ![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/action_after.png)
 
-With **redux-dispatcher**, the action type will be implicitly computed according to the ```key``` passed to ```synthesize``` method and the name of the action creator.
+With **redux-dispatcher**, the action type is implicitly computed according to the ```key``` passed to ```synthesize``` method and the name of the action creator.
 
 But if you want to explicitly specify a type, you can include a ```type``` property in the return object.  
 ```js
 import {synthesize} from "redux-dispatcher";
 
-const key = 'profile';
+const key = "profile";
 
 const mapDispatchToAC = {
     // type = "profile/FETCH_PROFILE"
@@ -97,12 +98,10 @@ profileDispatcher.updateProfile("my_username", "my_password");
 before          |  after
 :-------------------------:|:-------------------------:
 ![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/reducer_before.png)  |  ![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/reducer_after.png)
-![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/root_reducer_before.png)  |  ![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/root_reducer_after.png)
 
-Create ```reducer``` with **redux-dispatcher** is as easy as casual ```reducer```, with less code.
+Create ```reducer``` with **redux-dispatcher** is as easy as create casual ```reducer```, with less code.
 ```js
-// profileReducerObject = { profile: reducer function }
-profileDispatcher(initialState, {
+const profileReducer = profileDispatcher(initialState, {
     // similar to fall-through case in switch statement
     [[
       profileDispatcher.fetchProfile,
@@ -117,7 +116,12 @@ profileDispatcher(initialState, {
       password: encrypt(password)
     })    // only return what data need to be merged in state
     
-    // the default case is handle automatically
+    // the default case is handled automatically
+});
+
+// profileReducer = { profile: reducer function }
+const rootReducer = combineReducers({
+  ...profileReducer,
 });
 ```
 

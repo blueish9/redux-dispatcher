@@ -126,7 +126,7 @@ const rootReducer = combineReducers({
 ```
 
 ### 4. Work with other third-party Redux libraries
-An example when working with Redux Saga: Instead of passing an action type, you can just pass a dispatcher function to the ```takeLatest``` function.
+An example when working with [Redux Saga](https://redux-saga.js.org/): Instead of passing an action type, you can just pass a dispatcher function to the ```takeLatest``` function.
 ```js
 function* updateProfile({username, password}) {
   
@@ -138,4 +138,28 @@ function* profileWatcher() {
     takeLatest(profileDispatcher.updateProfile, updateProfile),
   ])
 }
+```
+
+---
+
+Define thunk like [Redux Thunk](https://github.com/reduxjs/redux-thunk)
+```js
+const mapDispatchToAC = {
+  fetchUser: id => (dispatch, getState, context) => {
+    // do something
+  }
+}
+```
+
+You can also provide global context to dispatcherMiddleware 
+just like how Redux Thunk middleware inject custom arguments, 
+[read more](https://github.com/reduxjs/redux-thunk#injecting-a-custom-argument).
+```js
+import {dispatcherMiddleware} from "redux-dispatcher";
+import {BASE_API_URL, FetchHelper} from "./somewhere";
+
+const store = createStore(
+    reducer,
+    applyMiddleware(dispatcherMiddleware.withContext({BASE_API_URL, FetchHelper}))
+);
 ```

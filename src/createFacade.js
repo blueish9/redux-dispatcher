@@ -20,9 +20,17 @@ export default function createFacade(key, mapDispatchToAction, enhancer) {
 
 const createDispatcher = (actionType, actionCreator) => {
   const dispatcher = (...args) => {
-    const payload = typeof actionCreator === 'function' ? actionCreator.apply(null, args) : actionCreator;
+    let payload = typeof actionCreator === 'function' ? actionCreator.apply(null, args) : actionCreator
     if (typeof payload === 'function')    // support for thunk
-      return payload(store.dispatch, store.getState, context)
+    {
+      const effect = payload
+      payload = args
+      effect({
+        ...context,
+        dispatch: store.dispatch,
+        getState: store.getState
+      })
+    }
 
     const action = {
       type: payload.type || actionType,

@@ -1,2 +1,7 @@
 example
 src
+
+.idea
+
+yarn-debug.log*
+yarn-error.log*

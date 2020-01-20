@@ -134,7 +134,7 @@ function* updateProfile({username, password}) {
 
 function* profileWatcher() {
   yield all([
-  // instead of passing an actiont type, you can just pass a dispatcher function
+  // instead of passing an action type, you can just pass a dispatcher function
     takeLatest(profileDispatcher.updateProfile, updateProfile),
   ])
 }
@@ -145,7 +145,7 @@ function* profileWatcher() {
 Define thunk like [Redux Thunk](https://github.com/reduxjs/redux-thunk)
 ```js
 const mapDispatchToAC = {
-  fetchUser: id => (dispatch, getState, context) => {
+  fetchUser: id => ({dispatch, getState, context}) => {
     // do something
   }
 }
@@ -155,11 +155,15 @@ You can also provide global context to dispatcherMiddleware
 just like how Redux Thunk middleware inject custom arguments, 
 [read more](https://github.com/reduxjs/redux-thunk#injecting-a-custom-argument).
 ```js
-import {dispatcherMiddleware} from "redux-dispatcher";
-import {BASE_API_URL, FetchHelper} from "./somewhere";
+import {dispatcherMiddleware} from "redux-dispatcher"
+
+const context = {
+  BASE_API_URL,
+  FetchHelper
+}
 
 const store = createStore(
     reducer,
-    applyMiddleware(dispatcherMiddleware.withContext({BASE_API_URL, FetchHelper}))
-);
+    applyMiddleware(dispatcherMiddleware.withContext(context))
+)
 ```

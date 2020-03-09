@@ -3,7 +3,7 @@ import {createReducer} from "./createReducer";
 
 
 /**
- * @param: mapActionToAC: Object<string: function or object>
+ * @param: mapDispatchToAction: Object<string: function or object>
  */
 export default function createFacade(key, mapDispatchToAction, enhancer) {
   const facade = createReducer(key, enhancer);
@@ -25,6 +25,17 @@ const createDispatcher = (actionType, actionCreator) => {
     {
       const effect = payload
       payload = args
+
+      if (effect.constructor.name === 'AsyncFunction')
+        // you can await on dispatch to get result
+        return new Promise((resolve) => {
+          resolve(effect({
+            ...context,
+            dispatch: store.dispatch,
+            getState: store.getState
+          }))
+        })
+
       effect({
         ...context,
         dispatch: store.dispatch,

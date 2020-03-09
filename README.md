@@ -119,6 +119,8 @@ const profileReducer = profileDispatcher(initialState, {
     // the default case is handled automatically
 });
 
+// profileReducer will match with key from profileDispatcher.key ("profile")
+
 // profileReducer = { profile: reducer function }
 const rootReducer = combineReducers({
   ...profileReducer,
@@ -151,8 +153,8 @@ const mapDispatchToAC = {
 }
 ```
 
-You can also provide global context to dispatcherMiddleware 
-just like how Redux Thunk middleware inject custom arguments, 
+You can also provide global context to `dispatcherMiddleware` 
+just like how Redux Thunk middleware **inject** custom arguments, 
 [read more](https://github.com/reduxjs/redux-thunk#injecting-a-custom-argument).
 ```js
 import {dispatcherMiddleware} from "redux-dispatcher"

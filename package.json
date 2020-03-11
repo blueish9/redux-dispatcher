@@ -29,5 +29,8 @@
   "bugs": {
     "url": "https://github.com/blueish9/redux-dispatcher/issues"
   },
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "dot-prop-immutable": "^2.1.0"
+  }
 }

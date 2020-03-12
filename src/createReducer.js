@@ -3,6 +3,9 @@
  * Date: 1/8/19
  */
 
+import dotProp  from 'dot-prop-immutable'
+
+
 export const reducers = {};
 
 export const createReducer = (key, enhancer) => (initialState, mapDispatchToReducer) => {
@@ -17,7 +20,7 @@ export const createReducer = (key, enhancer) => (initialState, mapDispatchToRedu
       if (typeof handler === 'function')
         return {
           ...state,
-          ...handler(state, payload)
+          ...handler(state, payload, withDotProp(state))
         };
 
       if (typeof handler === 'object')
@@ -50,3 +53,11 @@ const parseHandler = mapDispatchToReducer => {
 
   return reducerHandler;
 };
+
+const withDotProp = state => ({
+  get: (prop, defaultValue) => dotProp.get(state, prop, defaultValue),
+  set: (prop, value) => dotProp.set(state, prop, value),
+  merge: (prop, value) => dotProp.merge(state, prop, value),
+  toggle: prop => dotProp.toggle(state, prop),
+  remove: prop => dotProp.delete(state, prop),
+})

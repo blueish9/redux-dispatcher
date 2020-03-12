@@ -59,7 +59,7 @@ const mapDispatchToAC = {
 
     // if not explicitly specified, the action type will be automatically set: type = "profile/UPDATE_PROFILE"
     updateProfile: (username, password) => ({
-        // type: 'UPDATE_PROFILE',     you can specify the action type here
+        // type: "UPDATE_PROFILE",     you can specify the action type here
         username, password
     })
 };
@@ -127,24 +127,12 @@ const rootReducer = combineReducers({
 });
 ```
 
-### 4. Work with other third-party Redux libraries
-An example when working with [Redux Saga](https://redux-saga.js.org/): Instead of passing an action type, you can just pass a dispatcher function to the ```takeLatest``` function.
-```js
-function* updateProfile({username, password}) {
-  
-}
-
-function* profileWatcher() {
-  yield all([
-  // instead of passing an action type, you can just pass a dispatcher function
-    takeLatest(profileDispatcher.updateProfile, updateProfile),
-  ])
-}
-```
+### 4. Miscellaneous
+This section describes some useful features and extensions you may find interesting like thunk and immutable helper.    
 
 ---
 
-Define thunk like [Redux Thunk](https://github.com/reduxjs/redux-thunk)
+#### Define thunk like your favourite [Redux Thunk](https://github.com/reduxjs/redux-thunk)
 ```js
 const mapDispatchToAC = {
   fetchUser: id => ({dispatch, getState, context}) => {
@@ -168,4 +156,65 @@ const store = createStore(
     reducer,
     applyMiddleware(dispatcherMiddleware.withContext(context))
 )
+```
+
+---
+
+#### Immutable helper for state
+```js
+const profileReducer = profileDispatcher(initialState, {
+    /* equivalent to:
+       case "profile/UPDATE_STREET":
+          return {
+            ...state,
+            userInfo: {
+              ...state.userInfo,
+              address: {
+                ...state.userInfo.address,
+                street: action.street
+              }
+            }
+          }
+    */
+    [profileDispatcher.updateStreet]: (state, {street}, {set}) => ({
+      street: set('userInfo.address.street', street)
+    })
+});
+```
+
+All immutable helper functions are based on [dot-prop-immutable](https://github.com/debitoor/dot-prop-immutable)
+```js
+[profileDispatcher.updateStreet]: (state, payload, {get, set, merge, toggle, remove}) => ({
+   
+})
+```
+
+---
+#### Easily manage action types
+```js
+profileDispatcher.key === "profile"    // true
+profileDispatcher.updateProfile.type === "profile/UPDATE_PROFILE"    // true
+
+/* equivalent to:
+   const handler = {
+      "profile/UPDATE_PROFILE": (state, payload) => {}
+   }
+*/
+const handler = {
+  [profileDispatcher.updateProfile]: (state, payload) => {}
+} 
+```
+
+An example when working with [Redux Saga](https://redux-saga.js.org): Instead of passing an action type, you can just pass a dispatcher function to the ```takeLatest``` function.
+```js
+function* updateProfile({username, password}) {
+  
+}
+
+function* profileWatcher() {
+  yield all([
+    // instead of passing an action type, you can just pass a dispatcher function
+    takeLatest(profileDispatcher.updateProfile, updateProfile),
+  ])
+}
 ```

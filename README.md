@@ -11,12 +11,16 @@
 - Less code.
 - Get on well with IDE lookup (Find usages, Refactor).
 
-
 **Suitable**:
 - For people who have already familiar with Redux.
 - If you need to use Redux but want to reduce boilerplate.
 - If you find it tiresome every time you need to define, import, manage action type constants.
 
+**Additional features**:
+- [Thunk support](#user-content-define-thunk-like-your-favourite-redux-thunk)
+- [Immutable helper](#user-content-immutable-helper-for-state)
+
+---
 
 ## Usage
 ### 1. Install and setup

@@ -47,7 +47,8 @@ const createDispatcher = (actionType, actionCreator) => {
       type: payload.type || actionType,
       ...payload
     };
-    return store.dispatch(action);
+    store.dispatch(action);
+    return action;
   };
 
   dispatcher.toString = () => actionType;

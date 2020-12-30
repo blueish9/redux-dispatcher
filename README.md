@@ -1,15 +1,15 @@
 [![npm version](https://badge.fury.io/js/redux-dispatcher.svg)](https://badge.fury.io/js/redux-dispatcher)
 
 
-## redux-dispatcher is another opinionated helper library working along side with Redux.
-**It's main purpose is to combine action type, action creator and store's dispatch function into one, then you no need to worry about defining and managing action type constants.**
+## redux-dispatcher is an all-in-one simple solution to manage actions with less code 🦄
+**It's main purpose is to combine action type, action creator and dispatch function into one,
+ then you no need to worry about defining and managing action type constants.**
 
 **Guaranteed**:
 - No new concept to learn, nothing different from Redux paradigm.
 - Easy to adapt.
 - Easy to read and write.
 - Less code.
-- Get on well with IDE lookup (Find usages, Refactor).
 
 **Suitable**:
 - For people who have already familiar with Redux.
@@ -58,7 +58,7 @@ const key = "profile";
 
 const mapDispatchToAC = {
     // type = "profile/FETCH_PROFILE"
-    // if the action doesn't depend on parameters, you can just write an object like this
+    // if the action doesn't depend on parameters, you can just write a plain object
     fetchProfile: {loading: true},
 
     // if not explicitly specified, the action type will be automatically set: type = "profile/UPDATE_PROFILE"
@@ -71,27 +71,7 @@ const mapDispatchToAC = {
 const profileDispatcher = synthesize(key, mapDispatchToAC);
 ```
 
-To dispatch action, this is what you usually do (without redux-dispatcher):
-```js
-// use store directly (not recommended)
-store.dispatch(fetchProfile());
-
-
-// or with react-redux
-class ProfileView extends React.Component {
-    componentDidMount() {
-        this.props.fetchProfile();
-    }
-
-    //...
-}
-
-const mapDispatchToProps = {fetchProfile, updateProfile};
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProfileView);
-```
-
-Replace the old code with **redux-dispatcher**, you can just import the dispatcher you need and dispatch action anywhere you want 
+To dispatch action, you can just import the dispatcher you need and dispatch action anywhere you want 
 
 ```js
 profileDispatcher.updateProfile("my_username", "my_password");
@@ -103,25 +83,27 @@ before          |  after
 :-------------------------:|:-------------------------:
 ![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/reducer_before.png)  |  ![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/reducer_after.png)
 
-Create ```reducer``` with **redux-dispatcher** is as easy as create casual ```reducer```, with less code.
+Create ```reducer``` with **redux-dispatcher** is as easy as create usual ```reducer```, with less code.
 ```js
-const profileReducer = profileDispatcher(initialState, {
-    // similar to fall-through case in switch statement
-    [[
-      profileDispatcher.fetchProfile,
-      profileDispatcher.reloadProfile,
-      profileDispatcher.resetProfile
-    ]]: (state, payload) => payload,    // notice the payload, it doesn't have "type" property like action
-    
-    [profileDispatcher.loadingProfile]: {loading: true},    // you can just write a plain object if new state doesn't computed from current state or action payload
-    
-    [profileDispatcher.updateProfile]: (state, {username, password}) => ({
-      username,
-      password: encrypt(password)
-    })    // only return what data need to be merged in state
-    
-    // the default case is handled automatically
-});
+const mapTypeToReducer = {
+     // similar to fall-through case in switch statement
+     [[
+       profileDispatcher.fetchProfile,
+       profileDispatcher.reloadProfile,
+       profileDispatcher.resetProfile
+     ]]: (state, payload) => payload,    // notice the payload, it doesn't have "type" property like action
+     
+     [profileDispatcher.loadingProfile]: {loading: true},    // you can just write a plain object if new state doesn't computed from current state or action payload
+     
+     [profileDispatcher.updateProfile]: (state, {username, password}) => ({
+       username,
+       password: encrypt(password)
+     })    // only return what data need to be merged in state
+     
+     // the default case is handled automatically
+}
+
+const profileReducer = profileDispatcher(initialState, mapTypeToReducer);
 
 // profileReducer will match with key from profileDispatcher.key ("profile")
 
@@ -211,14 +193,6 @@ const handler = {
 
 An example when working with [Redux Saga](https://redux-saga.js.org): Instead of passing an action type, you can just pass a dispatcher function to the ```takeLatest``` function.
 ```js
-function* updateProfile({username, password}) {
-  
-}
-
-function* profileWatcher() {
-  yield all([
-    // instead of passing an action type, you can just pass a dispatcher function
-    takeLatest(profileDispatcher.updateProfile, updateProfile),
-  ])
-}
+const action = yield take(profileDispatcher.updateProfile)
+// action = { type, username, password }
 ```

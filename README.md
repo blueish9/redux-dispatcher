@@ -16,9 +16,10 @@
 - If you need to use Redux and want to reduce boilerplate.
 - If you find it tiresome every time you need to define, import, manage action type constants.
 
-**Additional features**:
+**Advanced functionalities**:
+- [Action with side effect](#user-content-retrieve-side-effect-result-after-dispatching-an-action)
 - [Thunk support](#user-content-define-thunk-like-your-favourite-redux-thunk)
-- [Immutable helper](#user-content-immutable-helper-for-state)
+- [Immutable helpers](#user-content-immutable-helper-for-state)
 
 ---
 
@@ -113,8 +114,54 @@ const rootReducer = combineReducers({
 });
 ```
 
-### 4. Miscellaneous
+
+### 4. Advanced functionalities
 This section describes some useful features and extensions you may find interesting like thunk and immutable helper.    
+
+---
+
+<details>
+<summary>#### Retrieve side effect result after dispatching an action (no more callback)</summary>
+  
+[See example](https://github.com/blueish9/redux-dispatcher/example/enhanceAction.js).
+
+Use case:
+```js
+const mapDispatchToAC = {
+  fetchProfile: withResult(userId => ({ userId })),
+};
+
+const userDispatcher = synthesize('user', mapDispatchToAC);
+```
+```js
+async componentDidMount() {
+  const action = userDispatcher.fetchProfile(userId)
+  const profile = await action.$result
+  this.setState({ profile })
+}
+```
+In your side effect handler (example with Redux Saga):
+```js
+import { takeLeading } from 'redux-saga/effects'
+
+function* fetchProfile(action) {
+  const profile = { name: "Emily" }   // call your side effect here (like API request)
+  action.$result = profile
+}
+
+// an alternative syntax to use with object destructuring
+/*
+function* fetchProfile({ userId, $result }) {
+  const profile = { name: "Emily" }
+  $result.value = profile
+}
+*/
+
+function* sagaWatcher() {
+  yield takeLeading(userDispatcher.fetchProfile, fetchProfile)
+}
+```
+</details>
 
 ---
 

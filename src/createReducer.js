@@ -1,8 +1,3 @@
-/**
- * Author: Quan Vo
- * Date: 1/8/19
- */
-
 import dotProp  from 'dot-prop-immutable'
 
 

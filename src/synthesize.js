@@ -1,8 +1,3 @@
-/**
- * Author: Quan Vo
- * Date: 11/7/18
- */
-
 import createFacade from "./createFacade";
 import {camelCaseToActionType} from "./utils";
 import mapEnhance from "./enhancer";

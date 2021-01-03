@@ -13,7 +13,7 @@
 
 **Suitable**:
 - For people who have already familiar with Redux.
-- If you need to use Redux but want to reduce boilerplate.
+- If you need to use Redux and want to reduce boilerplate.
 - If you find it tiresome every time you need to define, import, manage action type constants.
 
 **Additional features**:
@@ -85,7 +85,7 @@ before          |  after
 
 Create ```reducer``` with **redux-dispatcher** is as easy as create usual ```reducer```, with less code.
 ```js
-const mapTypeToReducer = {
+const mapActionToReducer = {
      // similar to fall-through case in switch statement
      [[
        profileDispatcher.fetchProfile,
@@ -103,7 +103,7 @@ const mapTypeToReducer = {
      // the default case is handled automatically
 }
 
-const profileReducer = profileDispatcher(initialState, mapTypeToReducer);
+const profileReducer = profileDispatcher(initialState, mapActionToReducer);
 
 // profileReducer will match with key from profileDispatcher.key ("profile")
 

@@ -1,8 +1,3 @@
-/**
- * Author: Quan Vo
- * Date: 2020-03-05
- */
-
 class ImList {
   constructor(data) {
     this.data = data

@@ -1,8 +1,3 @@
-/**
- * Author: Quan Vo
- * Date: 8/3/18
- */
-
 export let store;
 export let context;
 

@@ -17,7 +17,7 @@
 - If you find it tiresome every time you need to define, import, manage action type constants.
 
 **Advanced functionalities**:
-- [Action with side effect](#user-content-retrieve-side-effect-result-after-dispatching-an-action)
+- [Action with side effect](#user-content-retrieve-side-effect-result-after-dispatching-an-action-no-more-callback)
 - [Thunk support](#user-content-define-thunk-like-your-favourite-redux-thunk)
 - [Immutable helpers](#user-content-immutable-helper-for-state)
 
@@ -118,14 +118,18 @@ const rootReducer = combineReducers({
 ### 4. Advanced functionalities
 This section describes some useful features and extensions you may find interesting like thunk and immutable helper.    
 
----
-
+#### Retrieve side effect result after dispatching an action (no more callback)
 <details>
-<summary>#### Retrieve side effect result after dispatching an action (no more callback)</summary>
+<summary>
+When your action trigger some side effect (like API request), 
+you can use <b>withResult</b> helper as an alternative mechanism for callback.
+
+(Available from v1.6)
+</summary>
   
 [See example](https://github.com/blueish9/redux-dispatcher/example/enhanceAction.js).
 
-Use case:
+Use case with React:
 ```js
 const mapDispatchToAC = {
   fetchProfile: withResult(userId => ({ userId })),
@@ -137,10 +141,10 @@ const userDispatcher = synthesize('user', mapDispatchToAC);
 async componentDidMount() {
   const action = userDispatcher.fetchProfile(userId)
   const profile = await action.$result
-  this.setState({ profile })
+  this.setState({ profile })  // { name: "Emily" }
 }
 ```
-In your side effect handler (example with Redux Saga):
+In your side effect handler (example with [Redux Saga](https://redux-saga.js.org)):
 ```js
 import { takeLeading } from 'redux-saga/effects'
 
@@ -166,6 +170,11 @@ function* sagaWatcher() {
 ---
 
 #### Define thunk like your favourite [Redux Thunk](https://github.com/reduxjs/redux-thunk)
+<details>
+<summary>
+See example
+</summary>
+
 ```js
 const mapDispatchToAC = {
   fetchUser: id => ({dispatch, getState, context}) => {
@@ -190,10 +199,16 @@ const store = createStore(
     applyMiddleware(dispatcherMiddleware.withContext(context))
 )
 ```
+</details>
 
 ---
 
 #### Immutable helper for state
+<details>
+<summary>
+See example
+</summary>
+
 ```js
 const profileReducer = profileDispatcher(initialState, {
     /* equivalent to:
@@ -221,9 +236,15 @@ All immutable helper functions are based on [dot-prop-immutable](https://github.
    
 })
 ```
+</details>
 
 ---
 #### Easily manage action types
+<details>
+<summary>
+See example
+</summary>
+
 ```js
 profileDispatcher.key === "profile"    // true
 profileDispatcher.updateProfile.type === "profile/UPDATE_PROFILE"    // true
@@ -243,3 +264,4 @@ An example when working with [Redux Saga](https://redux-saga.js.org): Instead of
 const action = yield take(profileDispatcher.updateProfile)
 // action = { type, username, password }
 ```
+</details>

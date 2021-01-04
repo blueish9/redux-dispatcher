@@ -1,5 +1,6 @@
 import {context, store} from "./dispatcherMiddleware"
 import {createReducer} from "./createReducer";
+import {injectResult} from './enhanceAction';
 
 
 /**
@@ -43,10 +44,10 @@ const createDispatcher = (actionType, actionCreator) => {
       })
     }
 
-    const action = {
+    const action = injectResult({
       type: payload.type || actionType,
       ...payload
-    };
+    });
     store.dispatch(action);
     return action;
   };

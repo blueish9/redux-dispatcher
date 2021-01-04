@@ -122,7 +122,7 @@ This section describes some useful features and extensions you may find interest
 <details>
 <summary>
 When your action trigger some side effect (like API request), 
-you can use <b>withResult</b> helper as an alternative mechanism for callback.
+you can use a built-in <b>$result</b> helper as an alternative mechanism for callback.
 
 (Available from v1.6)
 </summary>
@@ -132,7 +132,7 @@ you can use <b>withResult</b> helper as an alternative mechanism for callback.
 Use case with React:
 ```js
 const mapDispatchToAC = {
-  fetchProfile: withResult(userId => ({ userId })),
+  fetchProfile: userId => ({ userId }),
 };
 
 const userDispatcher = synthesize('user', mapDispatchToAC);

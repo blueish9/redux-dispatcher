@@ -1,6 +1,6 @@
 {
   "name": "redux-dispatcher",
-  "version": "1.6.1",
+  "version": "1.7",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/blueish9/redux-dispatcher.git"

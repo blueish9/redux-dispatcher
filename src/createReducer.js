@@ -1,9 +1,13 @@
 import dotProp  from 'dot-prop-immutable'
+import {context} from './dispatcherMiddleware';
 
 
 export const reducers = {};
 
 export const createReducer = (key, enhancer) => (initialState, mapDispatchToReducer) => {
+  if (typeof mapDispatchToReducer === 'function')
+    mapDispatchToReducer = mapDispatchToReducer(context)
+
   if (enhancer)
     ({initialState, mapDispatchToReducer} = enhancer.injectReducer(key, initialState, mapDispatchToReducer));
 

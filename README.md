@@ -124,7 +124,7 @@ This section describes some useful features and extensions you may find interest
 When your action trigger some side effect (like API request), 
 you can use a built-in <b>$result</b> helper as an alternative mechanism for callback.
 
-(Available from v1.6)
+(Available from v1.7)
 </summary>
   
 [See example](https://github.com/blueish9/redux-dispatcher/example/enhanceAction.js).
@@ -203,7 +203,7 @@ const store = createStore(
 
 ---
 
-#### Immutable helper for state
+#### Immutable helpers for state
 <details>
 <summary>
 See example

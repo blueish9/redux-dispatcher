@@ -8,11 +8,21 @@ declare module 'redux-dispatcher' {
     };
   }
 
-  function synthesize<M, K extends string>(
+  class PromiseResult {
+    $result: any;
+  }
+
+  type Fnc = (...args: any[]) => any;
+
+  type ActionWithPromise<D extends Fnc> = (...args: Parameters<D>) => ReturnType<D> & PromiseResult;
+
+  type DispatchToAC = Record<string, Fnc & any>;
+
+  function synthesize<M extends DispatchToAC, K extends string>(
     key: K,
     mapDispatchToAC: M,
   ): {
-    [D in keyof M]: M[D] & Function & (() => any) & string & TakeableChannel<any> & Action<string>;
+    [D in keyof M]: ActionWithPromise<M[D]> & string & TakeableChannel<any> & Action<string>;
   } &
     Syn<K>;
 }

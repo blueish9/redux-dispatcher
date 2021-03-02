@@ -1,13 +1,15 @@
 export let store;
 export let context;
 
-const createMiddleware = _context => _store => {
-  store = _store;
+const createMiddleware = _context => {
   context = _context
-  return next => action => {
-    next(action);
+  return _store => {
+    store = _store;
+    return next => action => {
+      next(action);
+    };
   };
-};
+}
 
 const dispatcherMiddleware = createMiddleware()
 dispatcherMiddleware.withContext = createMiddleware

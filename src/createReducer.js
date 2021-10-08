@@ -86,5 +86,6 @@ export default function (initialState, mapDispatchToReducer) {
     return state;
   };
 
+  reducer.initialState = Object.freeze(initialState)
   return reducer;
 }

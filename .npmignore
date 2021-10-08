@@ -1,8 +1,11 @@
 example
 src
 experiment
+test
 
 .idea
+.github
+.babelrc
 
 yarn-debug.log*
 yarn-error.log*

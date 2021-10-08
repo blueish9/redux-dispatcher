@@ -73,7 +73,7 @@ export default function (initialState, mapDispatchToReducer) {
       if (typeof handler === 'function')
         return {
           ...state,
-          ...handler(state, payload)
+          ...handler(state, payload, withDotProp(state))
         };
 
       if (typeof handler === 'object')

@@ -1,6 +1,7 @@
 import {context, store} from "./dispatcherMiddleware"
 import {createReducer} from "./createReducer";
-import {injectResult} from './enhanceAction';
+import {injectResult} from './enhancer/injectResult';
+import Concurrency from './enhancer/Concurrency';
 
 
 /**
@@ -44,10 +45,11 @@ const createDispatcher = (actionType, actionCreator) => {
       })
     }
 
-    const action = injectResult({
+    let action = injectResult({
       type: payload.type || actionType,
       ...payload
     });
+    action = Concurrency.injectResult(action);
     store.dispatch(action);
     return action;
   };

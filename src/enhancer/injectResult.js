@@ -8,8 +8,6 @@ export const withResult = dispatcher => {
 export const injectResult = action => {
   let callback;
 
-  const setResult = data => callback(data);
-
   const $result = () => {
     const promise = new Promise(resolve => callback = resolve);
 
@@ -25,9 +23,12 @@ export const injectResult = action => {
     return promise;
   };
 
+  // `callback` is actually `resolve` (from Promise) at the time setter is called
+  const setResult = data => callback(data);
+
   Object.defineProperty(action, '$result', {
+    get: $result,
     set: setResult,
-    get: $result
   });
 
   return action;

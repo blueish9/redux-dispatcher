@@ -1,6 +1,5 @@
-import createFacade from "./createFacade";
-import {camelCaseToActionType} from "./utils";
-import mapEnhance from "./enhancer";
+import createFacade from './createFacade';
+import {camelCaseToActionType} from './utils';
 
 
 /**
@@ -8,9 +7,9 @@ import mapEnhance from "./enhancer";
  * @param: mapActionToDispatch: Object<string: function>
  */
 export default function synthesize(key, mapDispatchToAC, enhancer) {
-  enhancer = mapEnhance[enhancer];
+  /*enhancer = mapEnhance[enhancer];
   if (enhancer)
-    mapDispatchToAC = enhancer.injectAction(mapDispatchToAC);
+    mapDispatchToAC = enhancer.injectAction(mapDispatchToAC);*/
 
   const mapDispatchToAction = {};   // Object<string: function or object>
   for (const dispatch in mapDispatchToAC)

@@ -45,15 +45,11 @@ const store = createStore(
 
 ### 2. Define action type, action creator and dispatch action
 
-before          |  after
-:-------------------------:|:-------------------------:
-![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/action_before.png)  |  ![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/action_after.png)
-
-With **redux-dispatcher**, the action type is implicitly computed according to the ```key``` passed to ```synthesize``` method and the name of the action creator.
+With **redux-dispatcher**, the action type is implicitly computed according to the ```key``` passed to ```createDispatcher``` method and the name of the action creator.
 
 But if you want to explicitly specify a type, you can include a ```type``` property in the return object.  
 ```js
-import {synthesize} from "redux-dispatcher";
+import { createDispatcher } from 'redux-dispatcher';
 
 const key = "profile";
 
@@ -69,7 +65,7 @@ const mapDispatchToAC = {
     })
 };
 
-const profileDispatcher = synthesize(key, mapDispatchToAC);
+const profileDispatcher = createDispatcher(key, mapDispatchToAC);
 ```
 
 To dispatch action, you can just import the dispatcher you need and dispatch action anywhere you want 
@@ -80,13 +76,11 @@ profileDispatcher.updateProfile("my_username", "my_password");
 
 ### 3. Handle action in reducer
 
-before          |  after
-:-------------------------:|:-------------------------:
-![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/reducer_before.png)  |  ![after](https://quan-vo-blog.firebaseapp.com/img/redux-dispatcher/reducer_after.png)
-
-Create ```reducer``` with **redux-dispatcher** is as easy as create usual ```reducer```, with less code.
+Create ```reducer``` with **redux-dispatcher** is as easy as create a usual ```reducer```, with less code.
 ```js
-const mapActionToReducer = {
+import { createReducer } from 'redux-dispatcher';
+
+const mapActionToReducer = () => ({
      // similar to fall-through case in switch statement
      [[
        profileDispatcher.fetchProfile,
@@ -102,15 +96,12 @@ const mapActionToReducer = {
      })    // only return what data need to be merged in state
      
      // the default case is handled automatically
-}
+})
 
-const profileReducer = profileDispatcher(initialState, mapActionToReducer);
+const profileReducer = createReducer(initialState, mapActionToReducer);
 
-// profileReducer will match with key from profileDispatcher.key ("profile")
-
-// profileReducer = { profile: reducer function }
 const rootReducer = combineReducers({
-  ...profileReducer,
+  profile: profileReducer,
 });
 ```
 
@@ -121,10 +112,10 @@ This section describes some useful features and extensions you may find interest
 #### Retrieve side effect result after dispatching an action (no more callback)
 <details>
 <summary>
-When your action trigger some side effect (like API request), 
-you can use a built-in <b>$result</b> helper as an alternative mechanism for callback.
+When your action trigger some side effect (like fetching API), 
+you can use built-in hooks <b>dispatchResult</b> or <b>waitResult</b> to dispatch and subscribe for results from action.
 
-(Available from v1.7)
+(Available from v1.9.6)
 </summary>
   
 [See example](https://github.com/blueish9/redux-dispatcher/example/enhanceAction.js).
@@ -135,35 +126,59 @@ const mapDispatchToAC = {
   fetchProfile: userId => ({ userId }),
 };
 
-const userDispatcher = synthesize('user', mapDispatchToAC);
+const userDispatcher = createDispatcher('user', mapDispatchToAC);
 ```
 ```js
+// Component A
 async componentDidMount() {
   const action = userDispatcher.fetchProfile(userId)
-  const profile = await action.$result
-  this.setState({ profile })  // { name: "Emily" }
+  const profile = await action.waitResult()
+  // profile = { name: "Emily" }
 }
 ```
 In your side effect handler (example with [Redux Saga](https://redux-saga.js.org)):
 ```js
-import { takeLeading } from 'redux-saga/effects'
+import { take } from 'redux-saga/effects'
 
 function* fetchProfile(action) {
   const profile = { name: "Emily" }   // call your side effect here (like API request)
-  action.$result = profile
+  action.dispatchResult(profile)
 }
-
-// an alternative syntax to use with object destructuring
-/*
-function* fetchProfile({ userId, $result }) {
-  const profile = { name: "Emily" }
-  $result.value = profile
-}
-*/
 
 function* sagaWatcher() {
-  yield takeLeading(userDispatcher.fetchProfile, fetchProfile)
+  yield take(userDispatcher.fetchProfile, fetchProfile)
 }
+```
+
+If you want to subscribe for result from other places:
+```js
+// Component A calls userDispatcher.fetchProfile
+// but Component B and Component C also want to subscribe for the action's result
+
+import { waitResult } from "redux-dispatcher";
+
+// Component B
+async componentDidMount() {
+  // this Promise will be resolved when dispatchResult is called.
+  // if dispatchResult has already been called before, this waitResult will immediately return a cached result
+  const result = await waitResult(userDispatcher.fetchProfile)
+}
+
+// Component C
+componentDidMount() {
+  const unsubscribe = waitResult(userDispatcher.fetchProfile, result => {
+    // each time dispatchResult is called, this callback will be triggered
+  })
+
+  // to remove the callback from listening to result, simply call unsubscribe()
+}
+
+// in Component A, you can also subscribe for continuous results like in Component C
+componentDidMount() {
+  userDispatcher.fetchProfile(userId).waitResult(result => {
+    // each time dispatchResult is called, this callback will be triggered
+  })
+} 
 ```
 </details>
 
@@ -198,6 +213,11 @@ const store = createStore(
     reducer,
     applyMiddleware(dispatcherMiddleware.withContext(context))
 )
+
+// reducer
+const mapActionToReducer = context => {
+
+}
 ```
 </details>
 
@@ -210,7 +230,7 @@ See example
 </summary>
 
 ```js
-const profileReducer = profileDispatcher(initialState, {
+const profileReducer = createReducer(initialState, {
     /* equivalent to:
        case "profile/UPDATE_STREET":
           return {

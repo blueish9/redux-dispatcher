@@ -12,6 +12,7 @@ const Concurrency = (() => {
         }
         return events[type];
       },
+
       promise(type) {
         const callbackQueue = events[type].queue;
         return new Promise(resolve => {
@@ -55,7 +56,7 @@ const Concurrency = (() => {
     const event = Events.get(action.type);
     event.done = false;
 
-    const waitResult = (listener) => {
+    const action_waitResult = (listener) => {
       return waitResult(action.type, listener);
     };
 
@@ -76,8 +77,14 @@ const Concurrency = (() => {
     };
 
     Object.defineProperties(action, {
-      waitResult: {value: waitResult},
-      dispatchResult: {value: dispatchResult},
+      waitResult: {
+        value: action_waitResult,
+        enumerable: false
+      },
+      dispatchResult: {
+        value: dispatchResult,
+        enumerable: false
+      },
     });
 
     return action;

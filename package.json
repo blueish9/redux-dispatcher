@@ -1,6 +1,12 @@
 {
   "name": "redux-dispatcher",
-  "version": "1.8.0",
+  "version": "1.9.82",
+  "scripts": {
+    "babel-node": "babel-node --presets=latest",
+    "start": "nodemon --exec npx babel-node -- ./index.js",
+    "test": "jest",
+    "build": "babel src -d dist"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/blueish9/redux-dispatcher.git"
@@ -9,19 +15,20 @@
   "keywords": [
     "redux",
     "dispatcher",
-    "actions"
+    "actions",
+    "event-listener",
+    "dispatch-result",
+    "asyncronous"
   ],
   "author": "Quan Vo",
   "license": "MIT",
-  "description": "",
-  "scripts": {
-    "babel-node": "babel-node --presets=latest",
-    "start": "nodemon --exec npx babel-node -- ./index.js",
-    "test": "jest",
-    "build": "babel src -d dist"
-  },
+  "description": "All-in-one simple solution to manage actions with less code",
   "main": "dist/index.js",
-  "typings": "index.d.ts",
+  "types": "index.d.ts",
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
   "dependencies": {
     "dot-prop-immutable": "^2.1.0"
   },
@@ -31,5 +38,8 @@
     "babel-loader": "^7.1.5",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1"
+  },
+  "peerDependencies": {
+    "redux": "^4.1.1"
   }
 }

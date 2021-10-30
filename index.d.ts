@@ -63,3 +63,20 @@ type ContextualMiddleware = {
 
 
 export const dispatcherMiddleware: ContextualMiddleware & Middleware;
+
+
+type PartialReducer<S, P> = (state: S, payload: P) => Partial<S>
+
+type CaseFunc<S> = <D extends DispatchFunction>(
+  dispatcher: D,
+  reducer: PartialReducer<S, ReturnType<D>>,
+) => CaseBuilder<S>;
+
+type CaseArrayFunc<S> = <D extends DispatchFunction[]>(
+  dispatchers: D,
+  reducer: PartialReducer<S, ReturnType<D[number]>>
+) => CaseBuilder<S>;
+
+type CaseBuilder<S> = { case: CaseFunc<S> } & { case: CaseArrayFunc<S> }
+
+export function buildReducer<S>(initialState: S): CaseBuilder<S>

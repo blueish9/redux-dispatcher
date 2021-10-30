@@ -1,6 +1,6 @@
 {
   "name": "redux-dispatcher",
-  "version": "1.9.82",
+  "version": "1.9.83",
   "scripts": {
     "babel-node": "babel-node --presets=latest",
     "start": "nodemon --exec npx babel-node -- ./index.js",
@@ -37,7 +37,8 @@
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
     "babel-preset-es2015": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1"
+    "babel-preset-stage-0": "^6.24.1",
+    "eslint": "^8.1.0"
   },
   "peerDependencies": {
     "redux": "^4.1.1"

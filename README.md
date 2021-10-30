@@ -1,36 +1,46 @@
-[![npm version](https://badge.fury.io/js/redux-dispatcher.svg)](https://badge.fury.io/js/redux-dispatcher)
-
+[![](https://badge.fury.io/js/redux-dispatcher.svg)](https://badge.fury.io/js/redux-dispatcher)
+![](https://img.shields.io/npm/dm/redux-dispatcher)
+![](https://img.shields.io/npms-io/maintenance-score/redux-dispatcher)
+![](https://img.shields.io/npm/types/redux-dispatcher)
 
 ## redux-dispatcher is an all-in-one simple solution to manage actions with less code 🦄
-**It's main purpose is to combine action type, action creator and dispatch function into one,
- then you no need to worry about defining and managing action type constants.**
+**Its main purpose is to combine action type, action creator and dispatch function into one,
+then you no need to worry about defining and managing action type constants.**
+
+## Short example
+```js
+import { createDispatcher } from 'redux-dispatcher'
+
+const key = "app"
+
+const mapDispatch = {
+    setUser: name => ({ name })
+};
+
+const appDispatcher = createDispatcher(key, mapDispatch)
+```
+```js
+appDispatcher.setUser("Anonymous")  // dispatch action {type: "app/SET_USER", name: "Anonymous"}
+```
 
 **Guaranteed**:
-- No new concept to learn, nothing different from Redux paradigm.
-- Easy to adapt.
-- Easy to read and write.
-- Less code.
+- Intuitive
+- Less code
 
 **Suitable**:
-- For people who have already familiar with Redux.
-- If you need to use Redux and want to reduce boilerplate.
-- If you find it tiresome every time you need to define, import, manage action type constants.
+- If you use Redux and want to reduce boilerplate
+- If you find it tiresome every time you need to define, import, manage actions
 
 **Advanced functionalities**:
 - [Action with side effect](#user-content-retrieve-side-effect-result-after-dispatching-an-action-no-more-callback)
 - [Thunk support](#user-content-define-thunk-like-your-favourite-redux-thunk)
 - [Immutable helpers](#user-content-immutable-helper-for-state)
 
----
 
 ## Usage
 ### 1. Install and setup
-```yarn add redux-dispatcher```
-
-or
 
 ```npm install redux-dispatcher --save```
-
 
 **Setup**
 ```js
@@ -47,7 +57,7 @@ const store = createStore(
 
 With **redux-dispatcher**, the action type is implicitly computed according to the ```key``` passed to ```createDispatcher``` method and the name of the action creator.
 
-But if you want to explicitly specify a type, you can include a ```type``` property in the return object.  
+But if you want to explicitly specify a type, you can include a ```type``` property in the return object.
 ```js
 import { createDispatcher } from 'redux-dispatcher';
 
@@ -68,7 +78,7 @@ const mapDispatchToAC = {
 const profileDispatcher = createDispatcher(key, mapDispatchToAC);
 ```
 
-To dispatch action, you can just import the dispatcher you need and dispatch action anywhere you want 
+To dispatch action, you can just import the dispatcher you need and dispatch action anywhere you want
 
 ```js
 profileDispatcher.updateProfile("my_username", "my_password");
@@ -107,9 +117,9 @@ const rootReducer = combineReducers({
 
 
 ### 4. Advanced functionalities
-This section describes some useful features and extensions you may find interesting like thunk and immutable helper.    
+This section describes some useful features and extensions you may find interesting like thunk and immutable helper.
 
-#### Retrieve side effect result after dispatching an action (no more callback)
+#### Retrieve side effect result after dispatching an action
 <details>
 <summary>
 When your action trigger some side effect (like fetching API), 
@@ -117,13 +127,13 @@ you can use built-in hooks <b>dispatchResult</b> or <b>waitResult</b> to dispatc
 
 (Available from v1.9.6)
 </summary>
-  
+
 [See example](https://github.com/blueish9/redux-dispatcher/example/enhanceAction.js).
 
 Use case with React:
 ```js
 const mapDispatchToAC = {
-  fetchProfile: userId => ({ userId }),
+ fetchProfile: userId => ({ userId }),
 };
 
 const userDispatcher = createDispatcher('user', mapDispatchToAC);
@@ -131,9 +141,9 @@ const userDispatcher = createDispatcher('user', mapDispatchToAC);
 ```js
 // Component A
 async componentDidMount() {
-  const action = userDispatcher.fetchProfile(userId)
-  const profile = await action.waitResult()
-  // profile = { name: "Emily" }
+ const action = userDispatcher.fetchProfile(userId)
+ const profile = await action.waitResult()
+ // profile = { name: "Emily" }
 }
 ```
 In your side effect handler (example with [Redux Saga](https://redux-saga.js.org)):
@@ -141,12 +151,12 @@ In your side effect handler (example with [Redux Saga](https://redux-saga.js.org
 import { take } from 'redux-saga/effects'
 
 function* fetchProfile(action) {
-  const profile = { name: "Emily" }   // call your side effect here (like API request)
-  action.dispatchResult(profile)
+ const profile = { name: "Emily" }   // call your side effect here (like API request)
+ action.dispatchResult(profile)
 }
 
 function* sagaWatcher() {
-  yield take(userDispatcher.fetchProfile, fetchProfile)
+ yield take(userDispatcher.fetchProfile, fetchProfile)
 }
 ```
 
@@ -159,25 +169,25 @@ import { waitResult } from "redux-dispatcher";
 
 // Component B
 async componentDidMount() {
-  // this Promise will be resolved when dispatchResult is called.
-  // if dispatchResult has already been called before, this waitResult will immediately return a cached result
-  const result = await waitResult(userDispatcher.fetchProfile)
+ // this Promise will be resolved when dispatchResult is called.
+ // if dispatchResult has already been called before, this waitResult will immediately return a cached result
+ const result = await waitResult(userDispatcher.fetchProfile)
 }
 
 // Component C
 componentDidMount() {
-  const unsubscribe = waitResult(userDispatcher.fetchProfile, result => {
-    // each time dispatchResult is called, this callback will be triggered
-  })
+ const unsubscribe = waitResult(userDispatcher.fetchProfile, result => {
+  // each time dispatchResult is called, this callback will be triggered
+ })
 
-  // to remove the callback from listening to result, simply call unsubscribe()
+ // to remove the callback from listening to result, simply call unsubscribe()
 }
 
 // in Component A, you can also subscribe for continuous results like in Component C
 componentDidMount() {
-  userDispatcher.fetchProfile(userId).waitResult(result => {
-    // each time dispatchResult is called, this callback will be triggered
-  })
+ userDispatcher.fetchProfile(userId).waitResult(result => {
+  // each time dispatchResult is called, this callback will be triggered
+ })
 } 
 ```
 </details>
@@ -192,26 +202,26 @@ See example
 
 ```js
 const mapDispatchToAC = {
-  fetchUser: id => ({dispatch, getState, context}) => {
-    // do something
-  }
+ fetchUser: id => ({dispatch, getState, context}) => {
+  // do something
+ }
 }
 ```
 
-You can also provide global context to `dispatcherMiddleware` 
-just like how Redux Thunk middleware **inject** custom arguments, 
+You can also provide global context to `dispatcherMiddleware`
+just like how Redux Thunk middleware **inject** custom arguments,
 [read more](https://github.com/reduxjs/redux-thunk#injecting-a-custom-argument).
 ```js
 import {dispatcherMiddleware} from "redux-dispatcher"
 
 const context = {
-  BASE_API_URL,
-  FetchHelper
+ BASE_API_URL,
+ FetchHelper
 }
 
 const store = createStore(
-    reducer,
-    applyMiddleware(dispatcherMiddleware.withContext(context))
+        reducer,
+        applyMiddleware(dispatcherMiddleware.withContext(context))
 )
 
 // reducer
@@ -231,29 +241,29 @@ See example
 
 ```js
 const profileReducer = createReducer(initialState, {
-    /* equivalent to:
-       case "profile/UPDATE_STREET":
-          return {
-            ...state,
-            userInfo: {
-              ...state.userInfo,
-              address: {
-                ...state.userInfo.address,
-                street: action.street
-              }
-            }
-          }
-    */
-    [profileDispatcher.updateStreet]: (state, {street}, {set}) => ({
-      street: set('userInfo.address.street', street)
-    })
+ /* equivalent to:
+    case "profile/UPDATE_STREET":
+       return {
+         ...state,
+         userInfo: {
+           ...state.userInfo,
+           address: {
+             ...state.userInfo.address,
+             street: action.street
+           }
+         }
+       }
+ */
+ [profileDispatcher.updateStreet]: (state, {street}, {set}) => ({
+  street: set('userInfo.address.street', street)
+ })
 });
 ```
 
 All immutable helper functions are based on [dot-prop-immutable](https://github.com/debitoor/dot-prop-immutable)
 ```js
 [profileDispatcher.updateStreet]: (state, payload, {get, set, merge, toggle, remove}) => ({
-   
+
 })
 ```
 </details>
@@ -275,7 +285,7 @@ profileDispatcher.updateProfile.type === "profile/UPDATE_PROFILE"    // true
    }
 */
 const handler = {
-  [profileDispatcher.updateProfile]: (state, payload) => {}
+ [profileDispatcher.updateProfile]: (state, payload) => {}
 } 
 ```
 

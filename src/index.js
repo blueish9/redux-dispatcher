@@ -5,6 +5,7 @@ import buildReducer from './buildReducer';
 import Concurrency from './enhancer/Concurrency';
 
 const waitResult = Concurrency.waitResult;
+const injectResult = Concurrency.injectResult;
 
 export {
   synthesize,
@@ -13,5 +14,6 @@ export {
   reducers,
   createReducer,
   buildReducer,
-  waitResult
+  waitResult,
+  injectResult,
 };

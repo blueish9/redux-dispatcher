@@ -16,8 +16,9 @@
     "redux",
     "dispatcher",
     "actions",
-    "event-listener",
-    "dispatch-result",
+    "thunk",
+    "event listener",
+    "dispatch result",
     "asyncronous"
   ],
   "author": "Quan Vo",

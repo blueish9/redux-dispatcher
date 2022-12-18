@@ -30,13 +30,11 @@ const createDispatcher = (actionType, actionCreator) => {
 
       if (effect.constructor.name === 'AsyncFunction')
         // you can await on dispatch to get result
-        return new Promise((resolve) => {
-          resolve(effect({
-            ...context,
-            dispatch: store.dispatch,
-            getState: store.getState
-          }))
-        })
+        return Promise.resolve(effect({
+          ...context,
+          dispatch: store.dispatch,
+          getState: store.getState
+        }))
 
       effect({
         ...context,

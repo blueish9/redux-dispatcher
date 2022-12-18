@@ -208,7 +208,7 @@ const mapDispatchToAC = {
 }
 ```
 
-You can also provide global context to `dispatcherMiddleware`
+You can also provide a global context to `dispatcherMiddleware`
 just like how Redux Thunk middleware **inject** custom arguments,
 [read more](https://github.com/reduxjs/redux-thunk#injecting-a-custom-argument).
 ```js

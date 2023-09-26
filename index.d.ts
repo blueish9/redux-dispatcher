@@ -17,7 +17,11 @@ interface TakeableChannel<T> {
 type ResultCallback<T = any> = (result?: T) => void;
 
 declare class PromiseResult {
+  /**
+   * @deprecated: please use dispatchResult and waitResult instead
+   */
   $result: any;
+
   waitResult: typeof action_waitResult;
   dispatchResult: ResultCallback;
 }

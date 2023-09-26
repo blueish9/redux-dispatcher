@@ -8,7 +8,6 @@ const waitResult = Concurrency.waitResult;
 const injectResult = Concurrency.injectResult;
 
 export {
-  synthesize,
   dispatcherMiddleware,
   synthesize as createDispatcher,
   reducers,

@@ -1,6 +1,6 @@
 {
   "name": "redux-dispatcher",
-  "version": "1.9.84",
+  "version": "1.9.9",
   "scripts": {
     "babel-node": "babel-node --presets=latest",
     "start": "babel-node src/index.js",
